@@ -23,9 +23,6 @@ export function ProjectDetail() {
   const [isEditing, setIsEditing] = useState(false);
   const [noteText, setNoteText] = useState('');
 
-  const { mode, username } = getContext();
-  const basePath = mode === 'normal' ? `/${username}` : `/${mode}`;
-
   const STAGES = [
     { id: 'Lead', label: 'Lead' },
     { id: 'Proposal Sent', label: 'Proposal Sent' },
@@ -121,7 +118,7 @@ export function ProjectDetail() {
       <div className="p-xl" style={{textAlign: 'center', marginTop: 40}}>
         <h2>Project not found</h2>
         <p className="text-secondary" style={{marginBottom: 20}}>The project you are looking for does not exist or has been deleted.</p>
-        <Link to={`${basePath}/pipeline`}><Button variant="primary">Return to Pipeline</Button></Link>
+        <Link to="/pipeline"><Button variant="primary">Return to Pipeline</Button></Link>
       </div>
     );
   }
@@ -133,7 +130,7 @@ export function ProjectDetail() {
       <div className="detail-left">
         {/* Header */}
         <div className="detail-header">
-          <Link to={`${basePath}/pipeline`} className="back-link"><ArrowLeft size={16} /> Pipeline</Link>
+          <Link to="/pipeline" className="back-link"><ArrowLeft size={16} /> Pipeline</Link>
           <div className="header-main">
             {isEditing ? (
               <input 

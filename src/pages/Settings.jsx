@@ -74,7 +74,7 @@ export function Settings() {
           <Card className="settings-card highlight">
             <CardHeader>Data & Sovereignty</CardHeader>
             <CardContent>
-              <p className="settings-card-desc">Tesseract is private-first. You own all your data. Use these tools to move or protect your information.</p>
+              <p className="settings-card-desc">VERTEX is private-first. You own all your data. Use these tools to move or protect your information.</p>
               
               <div className="sovereignty-grid">
                 <div className="sov-action">

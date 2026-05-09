@@ -66,6 +66,10 @@
   --toggle-thumb-bg:       #7c3aed;
   --toggle-label-active:   #FFFFFF;
   --toggle-label-inactive: #524D78;
+
+  /* Accent Utilities */
+  --accent-light:          rgba(124, 58, 237, 0.12);
+  --accent-glow:           rgba(124, 58, 237, 0.25);
 }
 
 /* ══════════════════════════════════════
@@ -137,4 +141,8 @@
   --toggle-thumb-bg:       #000000;
   --toggle-label-active:   #FFFFFF;
   --toggle-label-inactive: #ADADAD;
+
+  /* Accent Utilities */
+  --accent-light:          rgba(0, 0, 0, 0.05);
+  --accent-glow:           rgba(0, 0, 0, 0.15);
 }

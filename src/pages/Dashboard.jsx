@@ -12,8 +12,7 @@ import './Dashboard.css';
 
 export function Dashboard() {
   const { mode, username } = getContext();
-  const basePath = mode === 'normal' ? `/${username}` : `/${mode}`;
-  const user = mode === 'normal' ? getUser(username) : { name: mode === 'demo' ? 'Demo User' : 'UAT Tester' };
+  const user = getUser(username) || { name: 'Freelancer' };
   
   // Modals
   const [activeModal, setActiveModal] = useState(null); // 'client' | 'project' | 'task'
@@ -210,7 +209,7 @@ export function Dashboard() {
       <Card className="pipeline-mini-card">
         <div className="pipeline-header">
           <h3 className="card-title">Pipeline Summary</h3>
-          <Link to={`${basePath}/pipeline`} className="view-link">View Pipeline <ArrowRight size={16} /></Link>
+          <Link to="/pipeline" className="view-link">View Pipeline <ArrowRight size={16} /></Link>
         </div>
         <div className="pipeline-track">
           {sourceData.pipelineSummary.map((stage, idx) => (

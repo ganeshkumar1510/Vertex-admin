@@ -12,13 +12,11 @@ import './Clients.css';
 
 export function Clients() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const { mode, username } = getContext();
+  const { mode } = getContext();
   const isDemo = mode === 'demo';
   
   const savedClients = getData('clients') || [];
   const clients = [...savedClients, ...(isDemo ? mockData.clients : [])];
-  
-  const basePath = mode === 'normal' ? `/${username}` : `/${mode}`;
 
   const handleCreateClient = (e) => {
     e.preventDefault();

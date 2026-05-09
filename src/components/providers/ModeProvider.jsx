@@ -3,14 +3,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
 const ModeContext = createContext({
-  mode: 'aether',
-  isAether: true,
+  mode: 'quasar',
+  isAether: false,
   toggle: () => {},
   setMode: () => {},
 })
 
 export function ModeProvider({ children }) {
-  const [mode, setModeState] = useState('aether')
+  const [mode, setModeState] = useState('quasar')
 
   useEffect(() => {
     const saved = localStorage.getItem('vertex-mode')

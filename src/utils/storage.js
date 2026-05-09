@@ -24,7 +24,7 @@ export function getContext() {
 }
 
 export function getTheme() {
-  return localStorage.getItem(KEYS.THEME) || 'ether';
+  return localStorage.getItem(KEYS.THEME) || 'quasar';
 }
 
 export function setTheme(theme) {
@@ -57,14 +57,6 @@ export function validateSystemCreds(username, pin) {
   return validateUserCredentials(username, pin);
 }
 
-// ── Deprecated/Alias Support for compatibility ──────────────────────────────
-export function validatePin(pin) {
-  return pin === '1510'; 
-}
-
-export function setAdminPin(pin) {
-  localStorage.setItem('fpc_admin_pin', pin);
-}
 
 // ── Data Fetching Helper ─────────────────────────────────────────────────────
 // Prefixes keys based on the current mode to isolate data
@@ -199,7 +191,7 @@ export function importStorageJSON(jsonData) {
 
 export function wipeStorage() {
   localStorage.clear();
-  console.log('Tesseract Instance Purged.');
+  console.log('VERTEX Instance Purged.');
 }
 
 export function logout() {

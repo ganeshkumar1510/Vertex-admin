@@ -20,7 +20,7 @@ export const generateInvoicePDF = (invoice, freelancer) => {
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(24);
-  doc.text('TESSERACT', 20, 25);
+  doc.text('VERTEX', 20, 25);
   
   doc.setFontSize(10);
   doc.setTextColor(113, 113, 122); // Secondary text
@@ -94,8 +94,8 @@ export const generateInvoicePDF = (invoice, freelancer) => {
   // ── Footer ──────────────────────────────────────────────────────────────
   doc.setFontSize(8);
   doc.setTextColor(113, 113, 122);
-  doc.text('Generated via Tesseract — Privacy-First Freelance CRM.', 105, 285, { align: 'center' });
+  doc.text('Generated via VERTEX — Privacy-First Focus OS.', 105, 285, { align: 'center' });
 
   // SAVE
-  doc.save(`${invoice.id}_Tesseract_Invoice.pdf`);
+  doc.save(`${invoice.id}_VERTEX_Invoice.pdf`);
 };

@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-@import '../styles/tokens.css';
+@import './styles/tokens.css';
 
 @tailwind base;
 @tailwind components;
@@ -28,6 +28,8 @@
     --accent-primary:  var(--color-primary);
     --accent-hover:    var(--color-primary-hover);
     --accent-subtle:   var(--color-primary-pressed);
+    --accent-light:    var(--accent-light); /* Resolved via theme classes */
+    --accent-glow:     var(--accent-glow);  /* Resolved via theme classes */
     
     --success: var(--color-success);
     --warning: var(--color-warning);

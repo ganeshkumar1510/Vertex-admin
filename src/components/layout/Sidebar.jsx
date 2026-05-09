@@ -22,9 +22,7 @@ const navItems = [
 ];
 
 export function Sidebar() {
-  const { username, mode: authMode } = getContext();
   const { isAether } = useMode();
-  const basePath = authMode === 'normal' ? `/${username}` : `/${authMode}`;
 
   return (
     <aside className="sidebar bg-surface border-r border-border-subtle w-[240px] flex flex-col">
@@ -36,7 +34,7 @@ export function Sidebar() {
         {navItems.map((item) => (
           <NavLink 
             key={item.path} 
-            to={`${basePath}/${item.path}`}
+            to={`/${item.path}`}
             className={({ isActive }) => cn(
               'flex items-center gap-sm px-md py-sm rounded-md font-display text-[14px] transition-all duration-200',
               isActive 
@@ -54,7 +52,7 @@ export function Sidebar() {
 
       <div className="p-md border-t border-border-subtle">
         <NavLink 
-          to={`${basePath}/settings`}
+          to="/settings"
           className={({ isActive }) => cn(
             'flex items-center gap-sm px-md py-sm rounded-md font-display text-[14px] transition-all duration-200',
             isActive 

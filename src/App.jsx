@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
 import { Dashboard } from './pages/Dashboard';
 import { Clients } from './pages/Clients';
@@ -10,8 +10,8 @@ import { Reports } from './pages/Reports';
 import { ClientDetail } from './pages/ClientDetail';
 import { ProjectDetail } from './pages/ProjectDetail';
 import { Settings } from './pages/Settings';
-import { Onboarding } from './pages/Onboarding';
-import { getContext } from './utils/storage';
+import { InitialSetup } from './pages/InitialSetup';
+import { hasAnyUser } from './utils/storage';
 
 const Placeholder = ({ title }) => (
   <div style={{ padding: '40px' }}>
@@ -23,16 +23,6 @@ const Placeholder = ({ title }) => (
 // ── Shared CRM Shell ─────────────────────────────────────────────────────────
 
 function CRMShell() {
-  const { mode, username } = getContext();
-  const params = useParams();
-
-  // Validate route matches current context
-  useEffect(() => {
-    if (params.username && params.username !== username && mode === 'normal') {
-      // Logic for cross-user protection could go here
-    }
-  }, [params.username, username, mode]);
-
   return (
     <Routes>
       <Route element={<AppLayout />}>
@@ -55,24 +45,22 @@ function CRMShell() {
 // ── Root App ─────────────────────────────────────────────────────────────────
 
 function App() {
-  const { mode, username } = getContext();
-  const hasUser = !!username;
+  const hasUser = hasAnyUser();
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to={hasUser ? `/${username}/dashboard` : "/onboarding"} replace />} />
-        <Route path="/onboarding" element={<Onboarding />} />
+        {/* Root Redirect Logic */}
+        <Route path="/" element={<Navigate to={hasUser ? "/dashboard" : "/setup"} replace />} />
         
-        {/* Specific Static Shells (Hidden from UI) */}
-        <Route path="/admin-demo/*" element={<CRMShell />} />
+        {/* Initial Setup Flow */}
+        <Route path="/setup" element={hasUser ? <Navigate to="/dashboard" replace /> : <InitialSetup />} />
         
-        {/* Dynamic Private Shell */}
-        <Route path="/:username/*" element={<CRMShell />} />
+        {/* Main Application Routes (Flat) */}
+        <Route path="/*" element={hasUser ? <CRMShell /> : <Navigate to="/setup" replace />} />
 
-        {/* Redirects */}
+        {/* Legacy/Generic Redirects */}
         <Route path="/home" element={<Navigate to="/" replace />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

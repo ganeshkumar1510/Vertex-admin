@@ -18,7 +18,7 @@ export function Invoices() {
   const savedInvoices = getData('invoices') || [];
   const invoices = [...savedInvoices, ...(isDemo ? mockData.invoices : [])];
   
-  const user = getUser(username) || { name: 'Freelancer', email: 'guest@tesseract.io', workspace: 'Tesseract Studio' };
+  const user = getUser(username) || { name: 'Freelancer', email: 'guest@vertex.io', workspace: 'VERTEX Studio' };
 
   const totalOutstanding = invoices.filter(i => i.status !== 'Paid').reduce((sum, i) => sum + (i.amount || 0), 0);
   const totalOverdue = invoices.filter(i => i.status === 'Overdue').reduce((sum, i) => sum + (i.amount || 0), 0);

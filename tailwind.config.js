@@ -49,6 +49,13 @@ export default {
           disabled:   'var(--color-text-disabled)',
           'on-primary': 'var(--color-text-on-primary)',
         },
+        accent: {
+          primary: 'var(--accent-primary)',
+          hover:   'var(--accent-hover)',
+          subtle:  'var(--accent-subtle)',
+          light:   'var(--accent-light)',
+          glow:    'var(--accent-glow)',
+        },
         success:  'var(--color-success)',
         warning:  'var(--color-warning)',
         error:    'var(--color-error)',

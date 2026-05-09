@@ -17,8 +17,6 @@ const STAGES = [
 export function Pipeline() {
   const navigate = useNavigate();
   const [projects, setProjects] = React.useState(() => getData('projects') || []);
-  const { mode, username } = getContext();
-  const basePath = mode === 'normal' ? `/${username}` : `/${mode}`;
 
   const getProjectsByStage = (stageId) => projects.filter(p => p.stage === stageId);
   const getStageTotal = (stageId) => getProjectsByStage(stageId).reduce((sum, p) => sum + (p.value || 0), 0);
@@ -78,7 +76,7 @@ export function Pipeline() {
                       <Card 
                         key={project.id} 
                         className={`kanban-card border-left-${stage.color}`}
-                        onClick={() => navigate(`${basePath}/projects/${project.id}`)}
+                        onClick={() => navigate(`/projects/${project.id}`)}
                       >
                         <div className="card-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                           <h4 className="project-name">{project.title || project.name}</h4>
