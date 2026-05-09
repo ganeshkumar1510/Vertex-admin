@@ -1,0 +1,46 @@
+import React from 'react';
+import { Search, Bell, Sparkles } from 'lucide-react';
+import { Input } from '../ui/Input';
+import { Button } from '../ui/Button';
+import { Avatar } from '../ui/Avatar';
+import { getUser } from '../../utils/storage';
+import { ModeToggle } from '../ui/ModeToggle';
+import { Logo } from '../ui/Logo';
+import './Topbar.css';
+
+export function Topbar({ onOpenAI, onOpenSearch }) {
+  const user = getUser();
+  const displayName = user ? user.name.split(' ')[0] : 'Freelancer';
+
+  return (
+    <header className="topbar">
+      <div className="flex items-center gap-md">
+        <Logo height={24} />
+      </div>
+      <div className="topbar-search" onClick={onOpenSearch}>
+        <Input 
+          placeholder="Search everywhere... (Press ⌘K)" 
+          icon={<Search size={16} />}
+          className="global-search"
+          readOnly
+        />
+      </div>
+
+      <div className="topbar-actions">
+        <ModeToggle size="default" />
+        <Button variant="ghost" className="ai-btn" onClick={onOpenAI}>
+          <Sparkles size={16} /> <span className="ai-text">Sentinel</span>
+        </Button>
+        <div className="notification-wrapper">
+          <Button variant="ghost" className="icon-only">
+            <Bell size={20} />
+          </Button>
+          <span className="notification-dot"></span>
+        </div>
+        <div className="user-profile">
+          <Avatar name={displayName} size="sm" />
+        </div>
+      </div>
+    </header>
+  );
+}

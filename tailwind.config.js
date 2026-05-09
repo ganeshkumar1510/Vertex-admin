@@ -1,0 +1,68 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}', './app/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['var(--font-display)', 'system-ui', 'sans-serif'],
+        body:    ['var(--font-body)',    'system-ui', 'sans-serif'],
+        mono:    ['var(--font-mono)',    'Courier New', 'monospace'],
+      },
+      colors: {
+        canvas: 'var(--color-canvas)',
+        surface: {
+          DEFAULT:  'var(--color-surface)',
+          raised:   'var(--color-surface-raised)',
+          elevated: 'var(--color-surface-elevated)',
+          overlay:  'var(--color-surface-overlay)',
+          sunken:   'var(--color-surface-sunken)',
+        },
+        border: {
+          subtle:  'var(--color-border-subtle)',
+          DEFAULT: 'var(--color-border-default)',
+          strong:  'var(--color-border-strong)',
+          active:  'var(--color-border-active)',
+        },
+        primary: {
+          DEFAULT: 'var(--color-primary)',
+          hover:   'var(--color-primary-hover)',
+          pressed: 'var(--color-primary-pressed)',
+          text:    'var(--color-primary-text)',
+        },
+        violet: {
+          singularity: 'var(--color-violet-singularity)',
+          wormhole:    'var(--color-violet-wormhole)',
+          magnetar:    'var(--color-violet-magnetar)',
+          pulsar:      'var(--color-violet-pulsar)',
+          vertex:      'var(--color-violet-vertex)',
+          nova:        'var(--color-violet-nova)',
+          aether:      'var(--color-violet-aether)',
+          nebula:      'var(--color-violet-nebula)',
+          drift:       'var(--color-violet-drift)',
+          luminance:   'var(--color-violet-luminance)',
+          cosmos:      'var(--color-violet-cosmos)',
+        },
+        text: {
+          primary:    'var(--color-text-primary)',
+          secondary:  'var(--color-text-secondary)',
+          muted:      'var(--color-text-muted)',
+          disabled:   'var(--color-text-disabled)',
+          'on-primary': 'var(--color-text-on-primary)',
+        },
+        success:  'var(--color-success)',
+        warning:  'var(--color-warning)',
+        error:    'var(--color-error)',
+      },
+      borderRadius: {
+        xs: '4px', sm: '6px', md: '8px',
+        lg: '12px', xl: '16px', '2xl': '24px',
+      },
+      spacing: {
+        xxs: '4px', xs: '8px', sm: '12px', md: '16px',
+        lg: '24px', xl: '32px', '2xl': '48px',
+        section: '64px', 'section-lg': '96px',
+      },
+    },
+  },
+  plugins: [],
+}

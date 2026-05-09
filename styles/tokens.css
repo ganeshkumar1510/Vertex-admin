@@ -1,0 +1,140 @@
+/* ══════════════════════════════════════
+   AETHER MODE — cosmic violet dark
+   ══════════════════════════════════════ */
+.aether {
+  /* Canvas & Surfaces */
+  --color-canvas:           #000000;
+  --color-surface:          #0A0A14;
+  --color-surface-raised:   #0F0E18;
+  --color-surface-elevated: #161428;
+  --color-surface-overlay:  #1E1B34;
+  --color-surface-sunken:   #070610;
+
+  /* Borders */
+  --color-border-subtle:    #1A1830;
+  --color-border-default:   #252240;
+  --color-border-strong:    #3D3960;
+  --color-border-active:    #5b21b6;
+
+  /* Primary */
+  --color-primary:          #7c3aed;
+  --color-primary-hover:    #8b5cf6;
+  --color-primary-pressed:  #6d28d9;
+  --color-primary-text:     #FFFFFF;
+
+  /* Violet Spectrum */
+  --color-violet-singularity: #2e1065;
+  --color-violet-wormhole:    #4c1d95;
+  --color-violet-magnetar:    #5b21b6;
+  --color-violet-pulsar:      #6d28d9;
+  --color-violet-vertex:      #7c3aed;
+  --color-violet-nova:        #8b5cf6;
+  --color-violet-aether:      #a78bfa;
+  --color-violet-nebula:      #c4b5fd;
+  --color-violet-drift:       #ddd6fe;
+  --color-violet-luminance:   #ede9fe;
+  --color-violet-cosmos:      #f5f3ff;
+
+  /* Text */
+  --color-text-primary:    #EDE9FF;
+  --color-text-secondary:  #9791C0;
+  --color-text-muted:      #524D78;
+  --color-text-disabled:   #2E2C47;
+  --color-text-on-primary: #FFFFFF;
+
+  /* Success — Aurora */
+  --color-success:         #2DD4BF;
+  --color-success-bg:      rgba(45, 212, 191, 0.10);
+  --color-success-border:  #1A7A71;
+  --color-success-text:    #2DD4BF;
+
+  /* Warning — Helios */
+  --color-warning:         #fbbf24;
+  --color-warning-bg:      rgba(251, 191, 36, 0.08);
+  --color-warning-border:  #8A6410;
+  --color-warning-text:    #fbbf24;
+
+  /* Error — Flare */
+  --color-error:           #E8547A;
+  --color-error-bg:        rgba(232, 84, 122, 0.08);
+  --color-error-border:    #8A2040;
+  --color-error-text:      #E8547A;
+
+  /* Toggle — Aether state */
+  --toggle-track-bg:       rgba(124, 58, 237, 0.15);
+  --toggle-track-border:   #5b21b6;
+  --toggle-thumb-bg:       #7c3aed;
+  --toggle-label-active:   #FFFFFF;
+  --toggle-label-inactive: #524D78;
+}
+
+/* ══════════════════════════════════════
+   QUASAR MODE — pure black & white
+   Zero violet. No exceptions.
+   ══════════════════════════════════════ */
+.quasar {
+  /* Canvas & Surfaces */
+  --color-canvas:           #FFFFFF;
+  --color-surface:          #FAFAFA;
+  --color-surface-raised:   #FFFFFF;
+  --color-surface-elevated: #F5F5F5;
+  --color-surface-overlay:  #EBEBEB;
+  --color-surface-sunken:   #F0F0F0;
+
+  /* Borders */
+  --color-border-subtle:    #EBEBEB;
+  --color-border-default:   #E5E5E5;
+  --color-border-strong:    #D4D4D4;
+  --color-border-active:    #000000;
+
+  /* Primary — black, not violet */
+  --color-primary:          #000000;
+  --color-primary-hover:    #1A1A1A;
+  --color-primary-pressed:  #333333;
+  --color-primary-text:     #FFFFFF;
+
+  /* Violet spectrum — all set to greyscale equivalents */
+  --color-violet-singularity: #1A1A1A;
+  --color-violet-wormhole:    #333333;
+  --color-violet-magnetar:    #4D4D4D;
+  --color-violet-pulsar:      #666666;
+  --color-violet-vertex:      #000000;
+  --color-violet-nova:        #333333;
+  --color-violet-aether:      #6B6B6B;
+  --color-violet-nebula:      #ADADAD;
+  --color-violet-drift:       #D4D4D4;
+  --color-violet-luminance:   #EBEBEB;
+  --color-violet-cosmos:      #F5F5F5;
+
+  /* Text */
+  --color-text-primary:    #000000;
+  --color-text-secondary:  #6B6B6B;
+  --color-text-muted:      #ADADAD;
+  --color-text-disabled:   #D4D4D4;
+  --color-text-on-primary: #FFFFFF;
+
+  /* Success — greyscale in Quasar */
+  --color-success:         #000000;
+  --color-success-bg:      #F5F5F5;
+  --color-success-border:  #E5E5E5;
+  --color-success-text:    #000000;
+
+  /* Warning — greyscale in Quasar */
+  --color-warning:         #6B6B6B;
+  --color-warning-bg:      #F5F5F5;
+  --color-warning-border:  #E5E5E5;
+  --color-warning-text:    #6B6B6B;
+
+  /* Error — greyscale in Quasar */
+  --color-error:           #000000;
+  --color-error-bg:        #F0F0F0;
+  --color-error-border:    #D4D4D4;
+  --color-error-text:      #000000;
+
+  /* Toggle — Quasar state */
+  --toggle-track-bg:       #F5F5F5;
+  --toggle-track-border:   #E5E5E5;
+  --toggle-thumb-bg:       #000000;
+  --toggle-label-active:   #FFFFFF;
+  --toggle-label-inactive: #ADADAD;
+}

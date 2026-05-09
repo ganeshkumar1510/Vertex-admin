@@ -1,0 +1,247 @@
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.greeting {
+  font-size: 28px;
+  margin-bottom: var(--space-xs);
+  letter-spacing: -0.02em;
+}
+
+.date-sub {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.quick-actions {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.pill {
+  border-radius: var(--radius-full);
+}
+
+/* Metrics Row */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+}
+
+.metric-card {
+  padding: var(--space-xl);
+}
+
+.metric-label {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: var(--space-sm);
+}
+
+.metric-value {
+  font-size: 32px;
+  margin-bottom: var(--space-xs);
+  letter-spacing: -0.02em;
+}
+
+.metric-trend {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.metric-trend.positive { color: var(--success); }
+.metric-trend.neutral { color: var(--text-secondary); }
+
+/* Two Col Middle */
+.dashboard-two-col {
+  display: grid;
+  grid-template-columns: 6fr 4fr;
+  gap: var(--space-lg);
+}
+
+.full-height {
+  height: 100%;
+}
+
+/* Agenda List */
+.agenda-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.agenda-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-primary);
+  transition: opacity 0.2s;
+}
+
+.agenda-item.done {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.check-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--success);
+  padding: 0;
+}
+
+.check-circle.checked {
+  border-color: var(--success);
+}
+
+.task-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-secondary);
+  width: 70px;
+}
+
+.task-details {
+  flex: 1;
+}
+
+.task-title {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.task-client {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.priority-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.priority-danger { background-color: var(--danger); }
+.priority-warning { background-color: var(--warning); }
+.priority-success { background-color: var(--success); }
+
+/* Activity Feed */
+.activity-feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.activity-item {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.activity-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.icon-blue { color: #3B82F6; }
+.icon-green { color: var(--success); }
+.icon-amber { color: var(--warning); }
+
+.act-desc {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.act-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.company-link {
+  color: var(--accent-primary);
+  cursor: pointer;
+}
+
+/* Pipeline Mini */
+.pipeline-mini-card {
+  padding: var(--space-xl);
+}
+
+.pipeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+}
+
+.card-title {
+  margin: 0;
+  font-size: 16px;
+}
+
+.view-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.pipeline-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pipeline-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  z-index: 2;
+}
+
+.stage-badge {
+  font-size: 13px !important;
+  padding: 4px 12px !important;
+}
+
+.stage-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.pipeline-edge {
+  flex: 1;
+  height: 2px;
+  background-color: var(--border-color);
+  margin: 0 var(--space-md);
+  margin-top: -24px;
+}

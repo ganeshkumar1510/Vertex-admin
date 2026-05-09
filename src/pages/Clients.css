@@ -1,0 +1,209 @@
+.clients-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.page-title {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: 0;
+}
+
+.count-badge {
+  font-size: 13px;
+  background-color: var(--neutral-light);
+  color: var(--text-secondary);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.title-group, .actions-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.filter-pills {
+  display: flex;
+  gap: 4px;
+  margin-left: var(--space-lg);
+}
+
+.filter-pill {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  transition: all 0.2s;
+}
+
+.filter-pill:hover {
+  background-color: var(--neutral-light);
+  color: var(--text-primary);
+}
+
+.filter-pill.active {
+  background-color: var(--neutral-light);
+  color: var(--text-primary);
+}
+
+.search-input {
+  width: 240px;
+}
+
+.sort-btn {
+  padding: var(--space-sm) var(--space-md);
+}
+
+/* Table Styles */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.clients-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.clients-table th {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+}
+
+.clients-table td {
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.client-row {
+  transition: background-color 0.2s;
+}
+
+.client-row:hover {
+  background-color: var(--bg-primary);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.client-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.client-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.client-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.client-company {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.number-badge {
+  display: inline-block;
+  background-color: var(--neutral-light);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.activity-text.green { color: var(--success); }
+.activity-text.amber { color: var(--warning); }
+.activity-text.gray { color: var(--text-secondary); }
+
+.status-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 14px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot-green { background-color: var(--success); }
+.dot-amber { background-color: var(--warning); }
+.dot-gray { background-color: var(--text-secondary); }
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.th-actions {
+  width: 40px;
+}
+
+.actions-cell {
+  text-align: right;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+}
+
+.pagination-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.pagination-controls {
+  display: flex;
+  gap: var(--space-sm);
+}
