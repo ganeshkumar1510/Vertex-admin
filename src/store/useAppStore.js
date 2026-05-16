@@ -1,0 +1,40 @@
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+export const useAppStore = create(
+  persist(
+    (set) => ({
+      // Theme State (Aether or Quasar)
+      themeMode: 'quasar',
+      setThemeMode: (mode) => {
+        set({ themeMode: mode });
+        // Update DOM for CSS variables
+        if (typeof document !== 'undefined') {
+          document.documentElement.setAttribute('data-theme', mode);
+        }
+      },
+
+      // Auth State
+      authToken: null,
+      setAuthToken: (token) => set({ authToken: token }),
+      logout: () => set({ authToken: null }),
+
+      // Setup State
+      isSetupComplete: false,
+      setSetupComplete: (status) => set({ isSetupComplete: status }),
+
+      // Demo Environment State
+      isDemoEnvironment: false,
+      setDemoEnvironment: (status) => set({ isDemoEnvironment: status }),
+    }),
+    {
+      name: 'vertex-storage', // unique name for localStorage
+      partialize: (state) => ({
+        themeMode: state.themeMode,
+        authToken: state.authToken,
+        isSetupComplete: state.isSetupComplete,
+        isDemoEnvironment: state.isDemoEnvironment,
+      }), // Only persist these keys
+    }
+  )
+);

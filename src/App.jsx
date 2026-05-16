@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAppStore } from './store/useAppStore';
 import { AppLayout } from './components/layout/AppLayout';
 import { Dashboard } from './pages/Dashboard';
 import { Clients } from './pages/Clients';
@@ -11,21 +12,29 @@ import { ClientDetail } from './pages/ClientDetail';
 import { ProjectDetail } from './pages/ProjectDetail';
 import { Settings } from './pages/Settings';
 import { InitialSetup } from './pages/InitialSetup';
-import { hasAnyUser } from './utils/storage';
+import { Login } from './pages/Login';
 
-const Placeholder = ({ title }) => (
-  <div style={{ padding: '40px' }}>
-    <h2>{title}</h2>
-    <p>This screen is under construction for the current module.</p>
-  </div>
-);
+// ── Auth Guard ───────────────────────────────────────────────────────────────
+const ProtectedRoute = ({ children }) => {
+  const { isSetupComplete, authToken } = useAppStore();
+
+  if (!isSetupComplete) {
+    return <Navigate to="/setup" replace />;
+  }
+
+  if (!authToken) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
 
 // ── Shared CRM Shell ─────────────────────────────────────────────────────────
 
 function CRMShell() {
   return (
     <Routes>
-      <Route element={<AppLayout />}>
+      <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="clients" element={<Clients />} />
         <Route path="clients/:id" element={<ClientDetail />} />
@@ -45,22 +54,31 @@ function CRMShell() {
 // ── Root App ─────────────────────────────────────────────────────────────────
 
 function App() {
-  const hasUser = hasAnyUser();
+  const { isSetupComplete, authToken } = useAppStore();
 
   return (
     <BrowserRouter>
       <Routes>
         {/* Root Redirect Logic */}
-        <Route path="/" element={<Navigate to={hasUser ? "/dashboard" : "/setup"} replace />} />
+        <Route path="/" element={
+          !isSetupComplete ? <Navigate to="/setup" replace /> :
+          !authToken ? <Navigate to="/login" replace /> :
+          <Navigate to="/dashboard" replace />
+        } />
         
         {/* Initial Setup Flow */}
-        <Route path="/setup" element={hasUser ? <Navigate to="/dashboard" replace /> : <InitialSetup />} />
-        
-        {/* Main Application Routes (Flat) */}
-        <Route path="/*" element={hasUser ? <CRMShell /> : <Navigate to="/setup" replace />} />
+        <Route path="/setup" element={
+          isSetupComplete ? <Navigate to="/" replace /> : <InitialSetup />
+        } />
 
-        {/* Legacy/Generic Redirects */}
-        <Route path="/home" element={<Navigate to="/" replace />} />
+        {/* Master Key Login */}
+        <Route path="/login" element={
+          !isSetupComplete ? <Navigate to="/setup" replace /> :
+          authToken ? <Navigate to="/dashboard" replace /> : <Login />
+        } />
+        
+        {/* Main Application Routes */}
+        <Route path="/*" element={<CRMShell />} />
       </Routes>
     </BrowserRouter>
   );

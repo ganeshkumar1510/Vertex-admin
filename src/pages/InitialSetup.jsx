@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { setContext, createUser, getTheme, saveData } from '../utils/storage';
-import { mockData } from '../utils/mockData';
-import { Shield, Sparkles, ArrowRight, Eye, EyeOff, CheckCircle, Palette, Terminal, Cpu } from 'lucide-react';
+import { useAppStore } from '../store/useAppStore';
+import { ArrowRight, Palette, Database, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { ModeToggle } from '../components/ui/ModeToggle';
 import { Logo } from '../components/ui/Logo';
@@ -10,81 +9,89 @@ import logoWhite from '../assets/tesseract-mark-white.svg';
 import logoDark from '../assets/tesseract-mark.svg';
 import './InitialSetup.css';
 
-const STEP = { INTRO: 0, THEME: 1, PROFILE: 2, CREDS: 3 };
+const STEP = { INTRO: 0, THEME: 1, MOCK_DATA: 2, INIT: 3 };
 
 export function InitialSetup() {
   const navigate = useNavigate();
-
-  React.useEffect(() => {
-    const theme = getTheme();
-    document.documentElement.setAttribute('data-theme', theme);
-  }, []);
-
-  const currentMode = localStorage.getItem('vertex-mode') || 'quasar';
-  const logoSrc = currentMode === 'quasar' ? logoDark : logoWhite;
+  const { themeMode, setThemeMode, setSetupComplete, setDemoEnvironment, isSetupComplete } = useAppStore();
 
   const [step, setStep] = useState(STEP.INTRO);
   const [error, setError] = useState('');
-  const [showPin, setShowPin] = useState(false);
+  const [preLoadDemo, setPreLoadDemo] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
 
-  // Form States
-  const [userForm, setUserForm] = useState({ 
-    name: '', 
-    email: '', 
-    password: '', 
-    profession: '',
-    domain: '',
-    tools: '',
-    sentinelTone: 'professional', // professional | mystical | direct
-    preLoadDemo: false
-  });
+  useEffect(() => {
+    // If setup is already complete, redirect to dashboard.
+    // However, the router should ideally handle this guard, 
+    // we keep it here just in case.
+    if (isSetupComplete) {
+      navigate('/dashboard');
+    }
+    
+    // Ensure the HTML root has the correct theme
+    document.documentElement.setAttribute('data-theme', themeMode);
+  }, [isSetupComplete, themeMode, navigate]);
+
+  const logoSrc = themeMode === 'quasar' ? logoDark : logoWhite;
 
   const handleNext = () => {
+    setError('');
     if (step === STEP.INTRO) setStep(STEP.THEME);
-    else if (step === STEP.THEME) setStep(STEP.PROFILE);
-    else if (step === STEP.PROFILE) {
-      if (!userForm.name || !userForm.email || !userForm.profession) {
-        setError('Please fill in your primary details.');
-        return;
-      }
-      setError('');
-      setStep(STEP.CREDS);
+    else if (step === STEP.THEME) setStep(STEP.MOCK_DATA);
+    else if (step === STEP.MOCK_DATA) {
+      setStep(STEP.INIT);
+      initializeEnvironment();
     }
   };
 
-  const finalizeSetup = async (e) => {
-    e.preventDefault();
-    if (!userForm.password) {
-      setError('A master sequence (password) is required.');
-      return;
-    }
+  const initializeEnvironment = async () => {
+    setIsInitializing(true);
+    setError('');
 
     try {
-      // 1. Pre-load demo data if requested
-      if (userForm.preLoadDemo) {
-        if (mockData.clients) saveData('clients', mockData.clients);
-        if (mockData.invoices) saveData('invoices', mockData.invoices);
-        if (mockData.projects) saveData('projects', mockData.projects);
-        if (mockData.tasks) saveData('tasks', mockData.tasks);
+      // 1. Check if DB schema exists and verify connection
+      const verifyRes = await fetch('/api/system/verify', {
+        headers: { 'Authorization': `Bearer ${useAppStore.getState().authToken}` }
+      });
+      
+      // Note: If authToken is not present, we will get a 401. 
+      // But according to our PRD, the Setup flow runs once on deploy.
+      // Wait, the API requires a Master Key login.
+      // Has the user logged in yet? The TRD doesn't mention login as part of Setup.
+      // Let's assume for MVP that if verify fails due to 401, we tell the user to configure `.env`.
+      
+      if (verifyRes.status === 401) {
+        throw new Error('Unauthorized. You must log in with your Master Key first, or check your .env configuration.');
       }
 
-      // 2. Save User (Central DB via API)
-      await createUser({
-        ...userForm,
-        username: 'solo_admin', 
-        setupComplete: true,
-        sentinelData: {
-          domain: userForm.domain,
-          tools: userForm.tools,
-          tone: userForm.sentinelTone,
-          initializedAt: new Date().toISOString()
-        }
-      });
+      if (!verifyRes.ok) {
+        throw new Error('Failed to verify database schema. Ensure your Supabase connection is active.');
+      }
 
-      setContext('normal', 'solo_admin');
-      window.location.href = '/dashboard';
+      // 2. Pre-load demo data if requested
+      if (preLoadDemo) {
+        const seedRes = await fetch('/api/system/seed', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${useAppStore.getState().authToken}` }
+        });
+        
+        if (!seedRes.ok) {
+          throw new Error('Failed to load demo data.');
+        }
+        setDemoEnvironment(true);
+      } else {
+        setDemoEnvironment(false);
+      }
+
+      // 3. Mark setup as complete
+      setSetupComplete(true);
+      
+      // 4. Redirect to Dashboard
+      navigate('/dashboard');
+
     } catch (err) {
-      setError(err.message || 'Failed to initialize orbit.');
+      setIsInitializing(false);
+      setError(err.message || 'Environment initialization failed.');
     }
   };
 
@@ -140,106 +147,62 @@ export function InitialSetup() {
               </div>
             </div>
 
-            <Button className="w-full" onClick={handleNext}>Confirm Essence <ArrowRight size={16} /></Button>
+            <Button className="w-full ob-btn-primary" onClick={handleNext}>Confirm Essence <ArrowRight size={16} /></Button>
           </div>
         )}
 
-        {/* ── STEP 2: Profile & Sentinel ───────────────────────────────────── */}
-        {step === STEP.PROFILE && (
+        {/* ── STEP 2: Mock Data Option ───────────────────────────────────────── */}
+        {step === STEP.MOCK_DATA && (
           <div className="ob-step">
-            <div className="ob-icon-wrap ob-icon-purple"><Cpu size={24} /></div>
-            <h1 className="ob-title">Heyy! Creative Sapien</h1>
-            <p className="ob-sub">Define your identity and workspace context for the VERTEX environment.</p>
+            <div className="ob-icon-wrap ob-icon-purple"><Database size={24} /></div>
+            <h1 className="ob-title">Initialise Environment</h1>
+            <p className="ob-sub">Your instance is private. Would you like to seed it with demo records to explore the modules?</p>
 
-            <div className="ob-field-group gap-lg">
-              <div className="flex flex-col gap-sm">
-                <input 
-                  className="ob-input" 
-                  placeholder="Full Name" 
-                  value={userForm.name}
-                  onChange={e => setUserForm({...userForm, name: e.target.value})}
-                />
-                <input 
-                  className="ob-input" 
-                  placeholder="Email Address" 
-                  value={userForm.email}
-                  onChange={e => setUserForm({...userForm, email: e.target.value})}
-                />
-                <input 
-                  className="ob-input" 
-                  placeholder="Primary Profession (e.g. Lead Designer)" 
-                  value={userForm.profession}
-                  onChange={e => setUserForm({...userForm, profession: e.target.value})}
-                />
-              </div>
-
-              <div className="h-[1px] bg-border-subtle my-sm" />
-
-              <div className="flex flex-col gap-sm">
-                <input 
-                  className="ob-input" 
-                  placeholder="Primary Domain (e.g. FinTech, SaaS, Web3)" 
-                  value={userForm.domain}
-                  onChange={e => setUserForm({...userForm, domain: e.target.value})}
-                />
-                <input 
-                  className="ob-input" 
-                  placeholder="Key Tools (e.g. Figma, React, Stripe)" 
-                  value={userForm.tools}
-                  onChange={e => setUserForm({...userForm, tools: e.target.value})}
-                />
-              </div>
-
-              <label className="flex items-center gap-sm cursor-pointer mt-sm group">
+            <div className="ob-field-group mb-xl">
+              <label className="flex items-center gap-sm cursor-pointer p-md border border-border-color rounded-lg hover:border-accent-primary transition-colors">
                 <div className="relative flex items-center">
                   <input 
                     type="checkbox" 
                     className="peer sr-only"
-                    checked={userForm.preLoadDemo}
-                    onChange={e => setUserForm({ ...userForm, preLoadDemo: e.target.checked })}
+                    checked={preLoadDemo}
+                    onChange={e => setPreLoadDemo(e.target.checked)}
                   />
                   <div className="w-5 h-5 border-2 border-border-color rounded transition-all peer-checked:bg-accent-primary peer-checked:border-accent-primary flex items-center justify-center">
-                    {userForm.preLoadDemo && <CheckCircle size={14} className="text-white" />}
+                    {preLoadDemo && <CheckCircle size={14} className="text-white" />}
                   </div>
                 </div>
-                <span className="text-xs font-medium text-text-muted group-hover:text-text-secondary transition-colors">Pre-load environment with demo data</span>
+                <span className="text-sm font-medium text-text-secondary">Pre-load environment with mock data</span>
               </label>
             </div>
 
-            {error && <p className="ob-error mt-md">{error}</p>}
-            <Button className="ob-btn-primary mt-xl" onClick={handleNext}>Next Sequence <ArrowRight size={16} /></Button>
+            <Button className="w-full ob-btn-primary" onClick={handleNext}>Initialise Vertex <ArrowRight size={16} /></Button>
           </div>
         )}
 
-        {/* ── STEP 4: Credentials ────────────────────────────────────────── */}
-        {step === STEP.CREDS && (
-          <form className="ob-step" onSubmit={finalizeSetup}>
-            <div className="ob-icon-wrap ob-icon-purple"><Shield size={24} /></div>
-            <h1 className="ob-title">Master Sequence</h1>
-            <p className="ob-sub">This password secures your local storage and sensitive actions.</p>
-
-            <div className="ob-field-group mb-xl">
-              <div className="ob-pin-wrap">
-                <input 
-                  type={showPin ? 'text' : 'password'}
-                  className="ob-input ob-pin-input" 
-                  placeholder="Master Password" 
-                  value={userForm.password}
-                  onChange={e => setUserForm({...userForm, password: e.target.value})}
-                  autoFocus
-                />
-                <button type="button" className="ob-pin-toggle" onClick={() => setShowPin(!showPin)}>
-                  {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
+        {/* ── STEP 3: Initialisation ────────────────────────────────────────── */}
+        {step === STEP.INIT && (
+          <div className="ob-step">
+            <div className="ob-icon-wrap ob-icon-purple">
+              {error ? <AlertTriangle size={24} className="text-red-500" /> : <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent-primary"></div>}
             </div>
+            
+            <h1 className="ob-title">{error ? 'Initialisation Failed' : 'Aligning Systems...'}</h1>
+            <p className="ob-sub mb-xl">
+              {error ? 'There was an issue connecting to your Vercel/Supabase environment.' : 'Verifying database schema and provisioning your private environment.'}
+            </p>
 
-            {error && <p className="ob-error mb-lg">{error}</p>}
-            <Button type="submit" className="ob-btn-primary mt-xl">Lock and Launch my orbit <ArrowRight size={16} /></Button>
-          </form>
+            {error && (
+              <div className="w-full">
+                <div className="p-sm bg-red-500/10 border border-red-500/20 rounded text-red-500 text-sm mb-lg">
+                  {error}
+                </div>
+                <Button className="w-full ob-btn-secondary" onClick={initializeEnvironment}>
+                  Retry Initialisation
+                </Button>
+              </div>
+            )}
+          </div>
         )}
-
-
       </div>
     </div>
   );
