@@ -4,7 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { mockData } from '../utils/mockData';
 import { Link } from 'react-router-dom';
-import { getContext, getUser, getData, addDataItem, logActivity } from '../utils/storage';
+import { getContext, getLocalUser, getData, addDataItem, logActivity, isDemoMode } from '../utils/storage';
 import { Plus, Mail, Phone, FileText, ArrowRight, CheckCircle, Database } from 'lucide-react';
 import { Modal } from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
@@ -12,7 +12,8 @@ import './Dashboard.css';
 
 export function Dashboard() {
   const { mode, username } = getContext();
-  const user = getUser(username) || { name: 'Freelancer' };
+  const user = getLocalUser(username);
+  const isDemo = isDemoMode();
   
   // Modals
   const [activeModal, setActiveModal] = useState(null); // 'client' | 'project' | 'task'
@@ -25,15 +26,16 @@ export function Dashboard() {
   const [invoices, setInvoices] = useState([]);
 
   React.useEffect(() => {
-    setClients(getData('clients') || []);
-    setProjects(getData('projects') || []);
-    setTasks(getData('tasks') || []);
+    const c = getData('clients') || [];
+    const p = getData('projects') || [];
+    const t = getData('tasks') || [];
+    setClients(c);
+    setProjects(p);
+    setTasks(t);
     setActivities(getData('activities') || []);
     setInvoices(getData('invoices') || []);
   }, []);
 
-  // Data Source Selection
-  const isDemo = mode === 'demo';
   const sourceData = useMemo(() => {
     const revenue = invoices.filter(i => i.status === 'Paid').reduce((s, i) => s + (i.amount || 0), 0);
     const pending = invoices.filter(i => i.status !== 'Paid').reduce((s, i) => s + (i.amount || 0), 0);
@@ -56,7 +58,7 @@ export function Dashboard() {
         { stage: 'Active', count: clients.filter(c => c.status === 'Active').length, value: 0, color: 'green' }
       ]
     };
-  }, [isDemo, mode, clients, projects, tasks, activities, invoices]);
+  }, [isDemo, clients, projects, tasks, activities, invoices]);
 
   const [agenda, setAgenda] = useState([]);
   
@@ -73,7 +75,7 @@ export function Dashboard() {
 
   const hours = new Date().getHours();
   const greeting = hours < 12 ? 'Good morning' : hours < 17 ? 'Good afternoon' : 'Good evening';
-  const displayName = user?.name ? user.name.split(' ')[0] : 'Freelancer';
+  const displayName = user.name?.split(' ')[0] || 'Freelancer';
 
   // Modal Handlers
   const openModal = (type) => setActiveModal(type);

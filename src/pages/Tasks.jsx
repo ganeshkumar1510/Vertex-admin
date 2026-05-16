@@ -2,21 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { CheckSquare, Calendar, Kanban, Plus, MoreHorizontal, List } from 'lucide-react';
-import { getData, addDataItem, logActivity, saveData, getContext } from '../utils/storage';
+import { getData, addDataItem, logActivity, saveData, getContext, isDemoMode } from '../utils/storage';
 import { mockData } from '../utils/mockData';
 import './Tasks.css';
 
 export function Tasks() {
   const { mode } = getContext();
-  const isDemo = mode === 'demo';
+  const isDemo = isDemoMode();
   
   const [persistentTasks, setPersistentTasks] = useState([]);
 
   useEffect(() => {
-    setPersistentTasks(getData('tasks') || []);
+    const stored = getData('tasks') || [];
+    setPersistentTasks(stored);
   }, []);
 
-  const allTasks = [...persistentTasks, ...(isDemo ? mockData.agenda : [])];
+  const allTasks = [
+    ...persistentTasks,
+    ...(isDemo ? mockData.agenda.filter((a) => !persistentTasks.some((t) => t.id === a.id)) : []),
+  ];
   
   const tasksByStatus = {
     overdue: [],

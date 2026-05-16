@@ -6,7 +6,8 @@ import { AIPanel } from './AIPanel';
 import { CommandPalette } from './CommandPalette';
 import { UATControls } from './UATControls';
 import { MobileNav } from './MobileNav';
-import { getContext, getTheme } from '../../utils/storage';
+import { getContext, setContext } from '../../utils/storage';
+import { useAppStore } from '../../store/useAppStore';
 import './AppLayout.css';
 
 export function AppLayout() {
@@ -14,6 +15,13 @@ export function AppLayout() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const { mode } = getContext();
+  const isDemoEnvironment = useAppStore((s) => s.isDemoEnvironment);
+
+  useEffect(() => {
+    if (isDemoEnvironment && mode !== 'demo') {
+      setContext('demo');
+    }
+  }, [isDemoEnvironment, mode]);
 
   // Global Command Palette Shortcut
   useEffect(() => {

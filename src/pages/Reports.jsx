@@ -7,9 +7,9 @@ import './Reports.css';
 import { getData } from '../utils/storage';
 
 export function Reports() {
-  const clients = getData('clients');
-  const projects = getData('projects');
-  const invoices = getData('invoices');
+  const clients = getData('clients') || [];
+  const projects = getData('projects') || [];
+  const invoices = getData('invoices') || [];
 
   const totalValue = projects.reduce((sum, p) => sum + (p.value || 0), 0);
   const activeCount = projects.filter(p => p.stage === 'Active').length;

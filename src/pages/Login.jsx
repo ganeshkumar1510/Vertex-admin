@@ -32,6 +32,7 @@ export function Login() {
       }
 
       setAuthToken(data.data.token);
+      localStorage.setItem('vtx_jwt', data.data.token);
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);

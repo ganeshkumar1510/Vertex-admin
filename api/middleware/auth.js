@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { getJwtSecret } from '../env.js';
 
 export const verifyToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -7,7 +8,7 @@ export const verifyToken = (req, res, next) => {
   if (!token) return res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Access denied. Missing token.' } });
 
   try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET || 'vertex-secret-key');
+    const verified = jwt.verify(token, getJwtSecret());
     req.user = verified;
     next();
   } catch (err) {

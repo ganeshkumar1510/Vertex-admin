@@ -2,6 +2,8 @@
 // storage.js  —  Tesseract Vertex  —  Multi-context storage layer
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { mockData } from './mockData.js';
+
 const KEYS = {
   ACTIVE_CONTEXT: 'vtx_active_context', // 'normal' | 'test' | 'demo'
   ACTIVE_USERNAME: 'vtx_active_username',
@@ -61,10 +63,59 @@ export function validateSystemCreds(username, pin) {
 // ── Data Fetching Helper ─────────────────────────────────────────────────────
 // Prefixes keys based on the current mode to isolate data
 
+function isDemoEnvironmentEnabled() {
+  if (getContext().mode === 'demo') return true;
+  try {
+    const raw = localStorage.getItem('vertex-storage');
+    if (!raw) return false;
+    return JSON.parse(raw)?.state?.isDemoEnvironment === true;
+  } catch {
+    return false;
+  }
+}
+
 function getPrefixedKey(key) {
   const { mode } = getContext();
   if (mode === 'test') return `test_${key}`;
+  if (isDemoEnvironmentEnabled()) return `demo_live_${key}`;
   return `live_${key}`;
+}
+
+export function isDemoMode() {
+  return isDemoEnvironmentEnabled();
+}
+
+const PROJECT_STAGE_ALIASES = {
+  Proposal: 'Proposal Sent',
+  Negotiating: 'Negotiation',
+  Complete: 'Completed',
+};
+
+function normalizeProject(item) {
+  if (!item?.stage) return item;
+  const stage = PROJECT_STAGE_ALIASES[item.stage] || item.stage;
+  return stage === item.stage ? item : { ...item, stage };
+}
+
+function readPersisted(key) {
+  const raw = localStorage.getItem(getPrefixedKey(key));
+  return raw ? JSON.parse(raw) : [];
+}
+
+function getMockItems(key) {
+  if (!mockData[key]) return [];
+  const items = [...mockData[key]];
+  return key === 'projects' ? items.map(normalizeProject) : items;
+}
+
+function mergeById(...lists) {
+  const map = new Map();
+  for (const list of lists) {
+    for (const item of list) {
+      if (item?.id != null) map.set(item.id, item);
+    }
+  }
+  return Array.from(map.values());
 }
 
 // ── API Helpers ─────────────────────────────────────────────────────────────
@@ -112,10 +163,26 @@ export async function apiGetProfile() {
 
 // ── User Management ──────────────────────────────────────────────────────────
 
+const DEFAULT_USER = {
+  name: 'Freelancer',
+  email: '',
+  bio: '',
+  profession: '',
+  workspace: 'VERTEX Studio',
+};
+
+/** Synchronous profile for UI — reads cached local user only. */
+export function getLocalUser(username) {
+  const resolved = username ?? getContext().username;
+  if (!resolved) return { ...DEFAULT_USER };
+  const users = JSON.parse(localStorage.getItem(KEYS.USERS) || '{}');
+  return users[resolved] ? { ...DEFAULT_USER, ...users[resolved] } : { ...DEFAULT_USER };
+}
+
 export async function getUser(username) {
   // First check local storage for offline support/caching
   const users = JSON.parse(localStorage.getItem(KEYS.USERS) || '{}');
-  if (users[username]) return users[username];
+  if (username && users[username]) return users[username];
 
   // Then try API
   try {
@@ -165,27 +232,34 @@ export function hasAnyUser() {
 
 // ── Generic Data Methods ─────────────────────────────────────────────────────
 
+function notifyDataChange(key) {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('vertex-data-change', { detail: { key } }));
+  }
+}
+
 export function getData(key) {
   const { mode } = getContext();
-  if (mode === 'demo') {
-    // Demo mode uses static mockData (handled by components)
-    return null; 
+  const persisted = readPersisted(key);
+  const useDemo = isDemoEnvironmentEnabled();
+
+  if (useDemo) {
+    return mergeById(getMockItems(key), persisted);
   }
-  const fullKey = getPrefixedKey(key);
-  const raw = localStorage.getItem(fullKey);
-  return raw ? JSON.parse(raw) : [];
+
+  return persisted;
 }
 
 export function saveData(key, data) {
-  const fullKey = getPrefixedKey(key);
-  localStorage.setItem(fullKey, JSON.stringify(data));
+  localStorage.setItem(getPrefixedKey(key), JSON.stringify(data));
+  notifyDataChange(key);
 }
 
 export function addDataItem(key, item) {
-  const items = getData(key) || [];
+  const persisted = readPersisted(key);
   const newItem = { id: crypto.randomUUID(), ...item, createdAt: new Date().toISOString() };
-  items.unshift(newItem); // Unshift so newer items are first
-  saveData(key, items);
+  persisted.unshift(newItem);
+  saveData(key, persisted);
   return newItem;
 }
 
@@ -228,7 +302,7 @@ export function clearTestContext() {
 
 export function exportStorageJSON() {
   const data = {};
-  const prefixes = ['vtx_', 'live_', 'test_'];
+  const prefixes = ['vtx_', 'live_', 'test_', 'demo_live_'];
   
   Object.keys(localStorage).forEach(key => {
     if (prefixes.some(p => key.startsWith(p))) {
@@ -248,7 +322,7 @@ export function exportStorageJSON() {
 export function importStorageJSON(jsonData) {
   try {
     const data = JSON.parse(jsonData);
-    const prefixes = ['vtx_', 'live_', 'test_'];
+    const prefixes = ['vtx_', 'live_', 'test_', 'demo_live_'];
     
     Object.keys(data).forEach(key => {
       if (prefixes.some(p => key.startsWith(p))) {

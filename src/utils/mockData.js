@@ -32,7 +32,8 @@ export const mockData = {
   projects: [
     { id: 'p1', name: 'Neural Interface UI', client: 'Nova Labs', value: 15000, dateAdded: 'Apr 10', status: 'Active', stage: 'Active', category: 'Product Design' },
     { id: 'p2', name: 'Brand Rebirth 2026', client: 'Eclipse Media', value: 12000, dateAdded: 'Apr 15', status: 'Active', stage: 'Active', category: 'Branding' },
-    { id: 'p3', name: 'SaaS Dashboard v3', client: 'Lumina Arch', value: 8500, dateAdded: 'Apr 20', status: 'Active', stage: 'Proposal', category: 'Web App' }
+    { id: 'p3', name: 'SaaS Dashboard v3', client: 'Lumina Arch', value: 8500, dateAdded: 'Apr 20', status: 'Active', stage: 'Proposal Sent', category: 'Web App' },
+    { id: 'p4', name: 'Orbit Rebrand', client: 'Ironstone', value: 5000, dateAdded: 'Apr 22', status: 'Active', stage: 'Lead', category: 'Branding' }
   ],
   tasks: [
     { id: 't1', title: 'Refine high-fidelity components', project: 'Neural Interface UI', priority: 'high', status: 'todo' },

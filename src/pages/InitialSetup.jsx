@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/useAppStore';
+import { setContext } from '../utils/storage';
 import { ArrowRight, Palette, Database, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { ModeToggle } from '../components/ui/ModeToggle';
@@ -44,51 +45,56 @@ export function InitialSetup() {
     }
   };
 
+  const parseApiError = async (res, fallback) => {
+    try {
+      const data = await res.json();
+      return data.error?.message || fallback;
+    } catch {
+      return fallback;
+    }
+  };
+
   const initializeEnvironment = async () => {
     setIsInitializing(true);
     setError('');
 
     try {
-      // 1. Check if DB schema exists and verify connection
-      const verifyRes = await fetch('/api/system/verify', {
-        headers: { 'Authorization': `Bearer ${useAppStore.getState().authToken}` }
-      });
-      
-      // Note: If authToken is not present, we will get a 401. 
-      // But according to our PRD, the Setup flow runs once on deploy.
-      // Wait, the API requires a Master Key login.
-      // Has the user logged in yet? The TRD doesn't mention login as part of Setup.
-      // Let's assume for MVP that if verify fails due to 401, we tell the user to configure `.env`.
-      
-      if (verifyRes.status === 401) {
-        throw new Error('Unauthorized. You must log in with your Master Key first, or check your .env configuration.');
+      // 1. Verify database / Supabase connection (no auth — setup runs before login)
+      let verifyRes;
+      try {
+        verifyRes = await fetch('/api/system/verify');
+      } catch {
+        throw new Error(
+          'Cannot reach the API server. Run `npm run dev` so both Vite and the API start together.'
+        );
       }
 
       if (!verifyRes.ok) {
-        throw new Error('Failed to verify database schema. Ensure your Supabase connection is active.');
+        throw new Error(await parseApiError(verifyRes, 'Failed to verify database connection.'));
+      }
+
+      const verifyData = await verifyRes.json();
+      if (verifyData.data?.schemaReady === false) {
+        console.warn(verifyData.data.hint || 'Database schema not migrated yet.');
       }
 
       // 2. Pre-load demo data if requested
       if (preLoadDemo) {
-        const seedRes = await fetch('/api/system/seed', {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${useAppStore.getState().authToken}` }
-        });
-        
+        const seedRes = await fetch('/api/system/seed', { method: 'POST' });
+
         if (!seedRes.ok) {
-          throw new Error('Failed to load demo data.');
+          throw new Error(await parseApiError(seedRes, 'Failed to load demo data.'));
         }
         setDemoEnvironment(true);
+        setContext('demo');
       } else {
         setDemoEnvironment(false);
+        setContext('normal');
       }
 
-      // 3. Mark setup as complete
+      // 3. Mark setup as complete and redirect to login
       setSetupComplete(true);
-      
-      // 4. Redirect to Dashboard
-      navigate('/dashboard');
-
+      navigate('/login');
     } catch (err) {
       setIsInitializing(false);
       setError(err.message || 'Environment initialization failed.');
@@ -188,7 +194,7 @@ export function InitialSetup() {
             
             <h1 className="ob-title">{error ? 'Initialisation Failed' : 'Aligning Systems...'}</h1>
             <p className="ob-sub mb-xl">
-              {error ? 'There was an issue connecting to your Vercel/Supabase environment.' : 'Verifying database schema and provisioning your private environment.'}
+              {error ? 'Check your .env file and ensure the API server is running.' : 'Verifying database schema and provisioning your private environment.'}
             </p>
 
             {error && (

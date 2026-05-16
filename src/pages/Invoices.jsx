@@ -4,8 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Plus, Send, Download } from 'lucide-react';
 import { generateInvoicePDF } from '../utils/pdfGenerator';
-import { mockData } from '../utils/mockData';
-import { getUser, getData, addDataItem, getContext, logActivity } from '../utils/storage';
+import { getLocalUser, getData, addDataItem, getContext, logActivity } from '../utils/storage';
 import { Modal } from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import './Invoices.css';
@@ -13,12 +12,9 @@ import './Invoices.css';
 export function Invoices() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { mode, username } = getContext();
-  const isDemo = mode === 'demo';
+  const invoices = getData('invoices') || [];
   
-  const savedInvoices = getData('invoices') || [];
-  const invoices = [...savedInvoices, ...(isDemo ? mockData.invoices : [])];
-  
-  const user = getUser(username) || { name: 'Freelancer', email: 'guest@vertex.io', workspace: 'VERTEX Studio' };
+  const user = getLocalUser(username);
 
   const totalOutstanding = invoices.filter(i => i.status !== 'Paid').reduce((sum, i) => sum + (i.amount || 0), 0);
   const totalOverdue = invoices.filter(i => i.status === 'Overdue').reduce((sum, i) => sum + (i.amount || 0), 0);

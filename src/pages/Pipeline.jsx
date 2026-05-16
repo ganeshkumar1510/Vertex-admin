@@ -16,7 +16,22 @@ const STAGES = [
 
 export function Pipeline() {
   const navigate = useNavigate();
+  const { mode } = getContext();
   const [projects, setProjects] = React.useState(() => getData('projects') || []);
+
+  const reloadProjects = React.useCallback(() => {
+    const list = getData('projects') || [];
+    setProjects(list);
+  }, [mode]);
+
+  React.useEffect(() => {
+    reloadProjects();
+    const onDataChange = (e) => {
+      if (!e.detail?.key || e.detail.key === 'projects') reloadProjects();
+    };
+    window.addEventListener('vertex-data-change', onDataChange);
+    return () => window.removeEventListener('vertex-data-change', onDataChange);
+  }, [reloadProjects]);
 
   const getProjectsByStage = (stageId) => projects.filter(p => p.stage === stageId);
   const getStageTotal = (stageId) => getProjectsByStage(stageId).reduce((sum, p) => sum + (p.value || 0), 0);

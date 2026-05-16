@@ -4,12 +4,12 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 import { User, Bell, Lock, Palette, CreditCard, Link as LinkIcon, Save, Database, Download, Upload, Trash2, RefreshCw } from 'lucide-react';
-import { exportStorageJSON, importStorageJSON, wipeStorage, getUser, getContext, validateUserCredentials } from '../utils/storage';
+import { exportStorageJSON, importStorageJSON, wipeStorage, getLocalUser, getContext, validateUserCredentials } from '../utils/storage';
 import './Settings.css';
 
 export function Settings() {
   const { username } = getContext();
-  const user = getUser(username) || { name: 'Freelancer', email: '', bio: '', profession: '' };
+  const user = getLocalUser(username);
 
   const handleExport = () => exportStorageJSON();
   

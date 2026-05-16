@@ -8,6 +8,10 @@ export function Badge({ variant = 'neutral', className, ...props }) {
     error: 'bg-[var(--color-error-bg)] text-[var(--color-error-text)]',
     violet: 'bg-[rgba(124,58,237,0.15)] text-violet-aether',
     neutral: 'bg-surface-elevated text-text-muted border border-border-subtle',
+    purple: 'bg-[rgba(124,58,237,0.15)] text-violet-aether',
+    green: 'bg-[var(--color-success-bg)] text-[var(--color-success-text)]',
+    amber: 'bg-[var(--color-warning-bg)] text-[var(--color-warning-text)]',
+    gray: 'bg-surface-elevated text-text-muted border border-border-subtle',
   }
 
   return (

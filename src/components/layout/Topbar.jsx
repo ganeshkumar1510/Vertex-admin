@@ -3,14 +3,15 @@ import { Search, Bell, Sparkles } from 'lucide-react';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { Avatar } from '../ui/Avatar';
-import { getUser } from '../../utils/storage';
+import { getLocalUser, getContext } from '../../utils/storage';
 import { ModeToggle } from '../ui/ModeToggle';
 import { Logo } from '../ui/Logo';
 import './Topbar.css';
 
 export function Topbar({ onOpenAI, onOpenSearch }) {
-  const user = getUser();
-  const displayName = user ? user.name.split(' ')[0] : 'Freelancer';
+  const { username } = getContext();
+  const user = getLocalUser(username);
+  const displayName = user.name?.split(' ')[0] || 'Freelancer';
 
   return (
     <header className="topbar">
