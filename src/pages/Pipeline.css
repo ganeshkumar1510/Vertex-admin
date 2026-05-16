@@ -1,0 +1,202 @@
+.pipeline-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--space-lg);
+  overflow: hidden; /* Parent prevents global scroll */
+}
+
+.view-toggles {
+  display: flex;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-left: var(--space-lg);
+}
+
+.view-btn {
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  color: var(--text-secondary);
+  border-right: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-btn:last-child {
+  border-right: none;
+}
+
+.view-btn.active {
+  background-color: var(--neutral-light);
+  color: var(--text-primary);
+}
+
+.pipeline-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-right: var(--space-md);
+  font-size: 14px;
+}
+
+.bold-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Kanban Board */
+.kanban-scroll-area {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: var(--space-md);
+  margin: 0 calc(var(--space-xl) * -1); /* Break out of applayout padding visually */
+  padding: 0 var(--space-xl);
+}
+
+.kanban-board {
+  display: flex;
+  gap: var(--space-lg);
+  height: 100%;
+}
+
+.kanban-column {
+  width: 320px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: rgba(250, 250, 249, 0.5);
+  border-radius: var(--radius-lg);
+  padding-bottom: var(--space-xl);
+}
+
+.column-header {
+  padding: var(--space-md);
+  border-top: 3px solid;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  margin-bottom: var(--space-md);
+  background-color: var(--bg-surface);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+/* Stage Colors */
+.border-purple { border-top-color: var(--stage-lead); }
+.border-amber { border-top-color: var(--stage-proposal); }
+.border-blue { border-top-color: var(--stage-negotiation); }
+.border-green { border-top-color: var(--stage-active); }
+.border-gray { border-top-color: var(--stage-completed); }
+.border-red { border-top-color: var(--stage-lost); }
+
+.column-title {
+  font-size: 14px;
+  margin: 0 0 4px 0;
+}
+
+.column-meta {
+  display: flex;
+  gap: var(--space-xs);
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.kanban-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  overflow-y: auto;
+  flex: 1;
+  padding: 0 4px; /* Room for shadow */
+}
+
+/* Card overrides */
+.kanban-card {
+  padding: var(--space-md) !important;
+  border-left: 3px solid;
+  cursor: grab;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.kanban-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kanban-card:active {
+  cursor: grabbing;
+}
+
+/* Left borders based on stage */
+.border-left-purple { border-left-color: var(--stage-lead); }
+.border-left-amber { border-left-color: var(--stage-proposal); }
+.border-left-blue { border-left-color: var(--stage-negotiation); }
+.border-left-green { border-left-color: var(--stage-active); }
+.border-left-gray { border-left-color: var(--stage-completed); }
+
+.project-name {
+  font-size: 14px;
+  margin: 0 0 2px 0;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.stage-select-mini {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 10px;
+  padding: 1px 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  outline: none;
+}
+
+.stage-select-mini:hover {
+  border-color: var(--accent-primary);
+}
+
+.project-client {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.project-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.date-added {
+  color: var(--text-secondary);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-primary);
+}
+
+.empty-column {
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+  background-color: transparent;
+}
