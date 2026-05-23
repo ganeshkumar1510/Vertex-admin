@@ -47,8 +47,16 @@ export function InitialSetup() {
 
   const parseApiError = async (res, fallback) => {
     try {
-      const data = await res.json();
-      return data.error?.message || fallback;
+      const text = await res.text();
+      try {
+        const data = JSON.parse(text);
+        return data.error?.message || data.message || fallback;
+      } catch {
+        if (text && text.length < 200) {
+          return `Server Error (${res.status}): ${text}`;
+        }
+        return `Server Error (${res.status}): ${res.statusText || fallback}`;
+      }
     } catch {
       return fallback;
     }
