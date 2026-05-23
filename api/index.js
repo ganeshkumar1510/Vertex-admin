@@ -27,9 +27,22 @@ async function verifyDatabaseConnection() {
   if (prisma) {
     try {
       const schemaVersion = await prisma.settings.findFirst();
-      return { verified: true, method: 'prisma', schemaVersion };
+      return { verified: true, method: 'prisma', schemaReady: true, schemaVersion };
     } catch (err) {
-      console.warn('Prisma verification failed:', err.message);
+      console.warn('Prisma verification failed, checking database reachability:', err.message);
+      try {
+        await prisma.$queryRaw`SELECT 1`;
+        // Database itself is reachable, but schema tables are not ready yet
+        return {
+          verified: true,
+          method: 'prisma',
+          schemaReady: false,
+          hint: 'Database is reachable, but tables are missing. Run `npx prisma db push` to push the schema.',
+          error: err.message
+        };
+      } catch (dbErr) {
+        throw new Error(`Database connection failed: ${dbErr.message}`);
+      }
     }
   }
 
@@ -117,27 +130,39 @@ api.post('/system/seed', async (req, res) => {
       return res.json({ data: { seeded: true, method: 'client' } });
     }
 
-    const existing = await prisma.client.count();
-    if (existing === 0) {
-      const client = await prisma.client.create({
-        data: {
-          name: 'Acme Design Co',
-          email: 'hello@acme.design',
-          company: 'Acme Design Co',
-          status: 'Active',
-        },
-      });
+    try {
+      const existing = await prisma.client.count();
+      if (existing === 0) {
+        const client = await prisma.client.create({
+          data: {
+            name: 'Acme Design Co',
+            email: 'hello@acme.design',
+            company: 'Acme Design Co',
+            status: 'Active',
+          },
+        });
 
-      await prisma.project.create({
+        await prisma.project.create({
+          data: {
+            client_id: client.id,
+            name: 'Brand Refresh',
+            status: 'In Progress',
+          },
+        });
+      }
+      res.json({ data: { seeded: true, method: 'prisma' } });
+    } catch (err) {
+      console.warn('Prisma seeding failed, falling back to client-side seed:', err.message);
+      // Fallback gracefully to client-side seeding if DB tables are not migrated
+      res.json({
         data: {
-          client_id: client.id,
-          name: 'Brand Refresh',
-          status: 'In Progress',
-        },
+          seeded: true,
+          method: 'client',
+          warning: 'Prisma seeding failed (tables might be missing). Fell back to client-side demo data.',
+          error: err.message
+        }
       });
     }
-
-    res.json({ data: { seeded: true, method: 'prisma' } });
   } catch (err) {
     res.status(500).json({
       error: { code: 'SEED_FAILED', message: err.message },

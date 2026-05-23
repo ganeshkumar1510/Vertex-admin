@@ -12,7 +12,12 @@ export function databaseUrlConfigured() {
 export function getPrisma() {
   if (!databaseUrlConfigured()) return null;
   if (!prisma) {
-    const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+    const connectionString = process.env.DATABASE_URL;
+    const isLocalhost = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
+    const pool = new pg.Pool({
+      connectionString,
+      ssl: isLocalhost ? false : { rejectUnauthorized: false }
+    });
     const adapter = new PrismaPg(pool);
     prisma = new PrismaClient({ adapter });
   }
